@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="mDF (modified Discriminant Function) Score Calculator">
+    <meta name="theme-color" content="#2c3e50">
+
+    <!-- PWA Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="mDF Calculator">
+
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192.png">
+
+    <title data-i18n="app-title">mDF Calculator</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 data-i18n="app-title">mDF Calculator</h1>
+            <p class="subtitle" data-i18n="app-subtitle">modified Discriminant Function Score</p>
+
+            <!-- Language Switcher -->
+            <div class="language-switcher">
+                <button id="lang-toggle" class="lang-btn" aria-label="Switch Language">
+                    <span id="current-lang">한국어</span>
+                </button>
+            </div>
+        </header>
+
+        <main>
+            <!-- Calculator Card -->
+            <div class="calculator-card">
+                <form id="mdf-form">
+                    <!-- PT Input -->
+                    <div class="input-group">
+                        <label for="pt-input">
+                            <span data-i18n="pt-label">Patient PT</span>
+                            <span class="unit">(sec)</span>
+                        </label>
+                        <input
+                            type="number"
+                            id="pt-input"
+                            step="0.1"
+                            min="0"
+                            max="200"
+                            placeholder="0.0"
+                            required
+                            autocomplete="off"
+                        >
+                        <small class="hint" data-i18n="pt-hint">Enter patient's PT value</small>
+                    </div>
+
+                    <!-- Total Bilirubin Input -->
+                    <div class="input-group">
+                        <label for="bilirubin-input">
+                            <span data-i18n="bilirubin-label">Total Bilirubin</span>
+                            <span class="unit">(mg/dL)</span>
+                        </label>
+                        <input
+                            type="number"
+                            id="bilirubin-input"
+                            step="0.1"
+                            min="0"
+                            max="100"
+                            placeholder="0.0"
+                            required
+                            autocomplete="off"
+                        >
+                        <small class="hint" data-i18n="bilirubin-hint">Enter total bilirubin value</small>
+                    </div>
+
+                    <!-- Advanced Options -->
+                    <div class="advanced-section">
+                        <button type="button" id="advanced-toggle" class="advanced-toggle">
+                            <span data-i18n="advanced-options">Advanced Options</span>
+                            <span class="toggle-icon">▼</span>
+                        </button>
+
+                        <div id="advanced-content" class="advanced-content" style="display: none;">
+                            <div class="input-group">
+                                <label for="control-pt-input">
+                                    <span data-i18n="control-pt-label">Control PT</span>
+                                    <span class="unit">(sec)</span>
+                                </label>
+                                <input
+                                    type="number"
+                                    id="control-pt-input"
+                                    step="0.1"
+                                    value="13.5"
+                                    min="0"
+                                    max="50"
+                                    autocomplete="off"
+                                >
+                                <small class="hint" data-i18n="control-pt-hint">Default upper limit: 13.5 sec</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Calculate Button -->
+                    <button type="submit" class="calculate-btn" id="calculate-btn">
+                        <span data-i18n="calculate-btn">Calculate mDF</span>
+                    </button>
+
+                    <!-- Reset Button -->
+                    <button type="button" class="reset-btn" id="reset-btn">
+                        <span data-i18n="reset-btn">Reset</span>
+                    </button>
+                </form>
+
+                <!-- Result Section -->
+                <div id="result-section" class="result-section" style="display: none;">
+                    <h2 data-i18n="result-title">Result</h2>
+                    <div class="result-card">
+                        <div class="result-label" data-i18n="mdf-score">mDF Score</div>
+                        <div class="result-value" id="mdf-result">0.00</div>
+                    </div>
+
+                    <!-- Calculation Details -->
+                    <div class="calculation-details">
+                        <h3 data-i18n="calculation-formula">Calculation Formula</h3>
+                        <div class="formula">
+                            mDF = 4.6 × (PT - Control PT) + Total Bilirubin
+                        </div>
+                        <div class="calculation-breakdown" id="calculation-breakdown"></div>
+                    </div>
+
+                    <!-- Clinical Interpretation -->
+                    <div class="interpretation-section" id="interpretation-section">
+                        <h3 data-i18n="interpretation-title">Clinical Interpretation</h3>
+                        <p class="interpretation-text" id="interpretation-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Information Card -->
+            <div class="info-card">
+                <h3 data-i18n="about-title">About mDF Score</h3>
+                <p data-i18n="about-text">
+                    The modified Discriminant Function (mDF) is used to assess the severity of alcoholic hepatitis
+                    and help guide treatment decisions. An mDF score ≥32 suggests severe alcoholic hepatitis and
+                    may indicate the need for corticosteroid therapy.
+                </p>
+            </div>
+        </main>
+
+        <footer>
+            <p data-i18n="footer-disclaimer">
+                This calculator is for educational purposes only. Always consult with a healthcare professional
+                for medical decisions.
+            </p>
+            <p class="version">v1.0.0</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/i18n.js"></script>
+    <script src="js/app.js"></script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registered:', registration);
+                    })
+                    .catch(error => {
+                        console.log('ServiceWorker registration failed:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
