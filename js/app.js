@@ -12,8 +12,6 @@ class MDFCalculator {
             controlPtInput: document.getElementById('control-pt-input'),
             calculateBtn: document.getElementById('calculate-btn'),
             resetBtn: document.getElementById('reset-btn'),
-            advancedToggle: document.getElementById('advanced-toggle'),
-            advancedContent: document.getElementById('advanced-content'),
             resultSection: document.getElementById('result-section'),
             mdfResult: document.getElementById('mdf-result'),
             calculationBreakdown: document.getElementById('calculation-breakdown'),
@@ -45,11 +43,6 @@ class MDFCalculator {
         // Reset button
         this.elements.resetBtn.addEventListener('click', () => {
             this.reset();
-        });
-
-        // Advanced options toggle
-        this.elements.advancedToggle.addEventListener('click', () => {
-            this.toggleAdvancedOptions();
         });
 
         // Auto-save input values
@@ -84,21 +77,6 @@ class MDFCalculator {
         } else {
             input.style.borderColor = 'var(--border-color)';
             return true;
-        }
-    }
-
-    /**
-     * Toggle advanced options
-     */
-    toggleAdvancedOptions() {
-        const isVisible = this.elements.advancedContent.style.display !== 'none';
-
-        if (isVisible) {
-            this.elements.advancedContent.style.display = 'none';
-            this.elements.advancedToggle.classList.remove('active');
-        } else {
-            this.elements.advancedContent.style.display = 'block';
-            this.elements.advancedToggle.classList.add('active');
         }
     }
 

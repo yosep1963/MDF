@@ -57,6 +57,24 @@
                         <small class="hint" data-i18n="pt-hint">Enter patient's PT value</small>
                     </div>
 
+                    <!-- Control PT Input (PT Upper Limit) -->
+                    <div class="input-group">
+                        <label for="control-pt-input">
+                            <span data-i18n="control-pt-label">Control PT (Upper Limit)</span>
+                            <span class="unit">(sec)</span>
+                        </label>
+                        <input
+                            type="number"
+                            id="control-pt-input"
+                            step="0.1"
+                            value="13.5"
+                            min="0"
+                            max="50"
+                            autocomplete="off"
+                        >
+                        <small class="hint" data-i18n="control-pt-hint">PT upper limit of your lab (default: 13.5 sec)</small>
+                    </div>
+
                     <!-- Total Bilirubin Input -->
                     <div class="input-group">
                         <label for="bilirubin-input">
@@ -74,33 +92,6 @@
                             autocomplete="off"
                         >
                         <small class="hint" data-i18n="bilirubin-hint">Enter total bilirubin value</small>
-                    </div>
-
-                    <!-- Advanced Options -->
-                    <div class="advanced-section">
-                        <button type="button" id="advanced-toggle" class="advanced-toggle">
-                            <span data-i18n="advanced-options">Advanced Options</span>
-                            <span class="toggle-icon">▼</span>
-                        </button>
-
-                        <div id="advanced-content" class="advanced-content" style="display: none;">
-                            <div class="input-group">
-                                <label for="control-pt-input">
-                                    <span data-i18n="control-pt-label">Control PT</span>
-                                    <span class="unit">(sec)</span>
-                                </label>
-                                <input
-                                    type="number"
-                                    id="control-pt-input"
-                                    step="0.1"
-                                    value="13.5"
-                                    min="0"
-                                    max="50"
-                                    autocomplete="off"
-                                >
-                                <small class="hint" data-i18n="control-pt-hint">Default upper limit: 13.5 sec</small>
-                            </div>
-                        </div>
                     </div>
 
                     <!-- Calculate Button -->

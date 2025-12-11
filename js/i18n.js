@@ -14,11 +14,8 @@ const translations = {
         'pt-hint': '환자의 PT 값을 입력하세요',
         'bilirubin-label': '총 빌리루빈',
         'bilirubin-hint': '총 빌리루빈 값을 입력하세요',
-        'control-pt-label': '대조군 PT',
-        'control-pt-hint': '기본 상한값: 13.5초',
-
-        // Advanced Options
-        'advanced-options': '고급 옵션',
+        'control-pt-label': 'Control PT (상한값)',
+        'control-pt-hint': '검사실 PT 상한값 (기본값: 13.5초)',
 
         // Buttons
         'calculate-btn': 'mDF 계산',
@@ -58,11 +55,8 @@ const translations = {
         'pt-hint': 'Enter patient\'s PT value',
         'bilirubin-label': 'Total Bilirubin',
         'bilirubin-hint': 'Enter total bilirubin value',
-        'control-pt-label': 'Control PT',
-        'control-pt-hint': 'Default upper limit: 13.5 sec',
-
-        // Advanced Options
-        'advanced-options': 'Advanced Options',
+        'control-pt-label': 'Control PT (Upper Limit)',
+        'control-pt-hint': 'PT upper limit of your lab (default: 13.5 sec)',
 
         // Buttons
         'calculate-btn': 'Calculate mDF',
