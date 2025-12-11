@@ -56,8 +56,17 @@ class MDFCalculator {
             });
         });
 
-        // Bilirubin unit toggle handler
-        this.elements.bilirubinUnit.addEventListener('click', () => {
+        // Bilirubin unit toggle handler (support both click and touch)
+        this.elements.bilirubinUnit.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.toggleBilirubinUnit();
+        });
+
+        // Touch event for mobile devices
+        this.elements.bilirubinUnit.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
             this.toggleBilirubinUnit();
         });
 
