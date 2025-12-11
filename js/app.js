@@ -9,6 +9,7 @@ class MDFCalculator {
             form: document.getElementById('mdf-form'),
             ptInput: document.getElementById('pt-input'),
             bilirubinInput: document.getElementById('bilirubin-input'),
+            bilirubinUnit: document.getElementById('bilirubin-unit'),
             controlPtInput: document.getElementById('control-pt-input'),
             calculateBtn: document.getElementById('calculate-btn'),
             resetBtn: document.getElementById('reset-btn'),
@@ -18,6 +19,9 @@ class MDFCalculator {
             interpretationSection: document.getElementById('interpretation-section'),
             interpretationText: document.getElementById('interpretation-text')
         };
+
+        // Bilirubin unit conversion factor: 1 mg/dL = 17.1 µmol/L
+        this.BILIRUBIN_CONVERSION_FACTOR = 17.1;
 
         this.init();
     }
@@ -52,6 +56,11 @@ class MDFCalculator {
             });
         });
 
+        // Bilirubin unit toggle handler
+        this.elements.bilirubinUnit.addEventListener('click', () => {
+            this.toggleBilirubinUnit();
+        });
+
         // Language change listener
         window.addEventListener('languageChanged', () => {
             this.updateInterpretation();
@@ -81,37 +90,71 @@ class MDFCalculator {
     }
 
     /**
+     * Toggle bilirubin unit between mg/dL and µmol/L
+     */
+    toggleBilirubinUnit() {
+        const currentUnit = this.elements.bilirubinUnit.dataset.unit;
+        const newUnit = currentUnit === 'mg/dL' ? 'µmol/L' : 'mg/dL';
+
+        this.elements.bilirubinUnit.dataset.unit = newUnit;
+        this.elements.bilirubinUnit.querySelector('.unit-text').textContent = newUnit;
+
+        this.saveValues();
+    }
+
+    /**
+     * Get current bilirubin unit
+     */
+    getBilirubinUnit() {
+        return this.elements.bilirubinUnit.dataset.unit || 'mg/dL';
+    }
+
+    /**
+     * Convert bilirubin from µmol/L to mg/dL
+     */
+    convertBilirubinToMgDl(value, unit) {
+        if (unit === 'µmol/L') {
+            return value / this.BILIRUBIN_CONVERSION_FACTOR;
+        }
+        return value; // Already in mg/dL
+    }
+
+    /**
      * Calculate mDF score
      */
     calculate() {
         // Get input values
         const pt = parseFloat(this.elements.ptInput.value);
-        const bilirubin = parseFloat(this.elements.bilirubinInput.value);
+        const bilirubinRaw = parseFloat(this.elements.bilirubinInput.value);
+        const bilirubinUnit = this.getBilirubinUnit();
         const controlPt = parseFloat(this.elements.controlPtInput.value) || 13.5;
 
         // Validate inputs
-        if (isNaN(pt) || isNaN(bilirubin)) {
+        if (isNaN(pt) || isNaN(bilirubinRaw)) {
             alert(i18n.getCurrentLanguage() === 'ko'
                 ? '모든 필수 값을 입력해주세요.'
                 : 'Please enter all required values.');
             return;
         }
 
-        if (pt < 0 || bilirubin < 0) {
+        if (pt < 0 || bilirubinRaw < 0) {
             alert(i18n.getCurrentLanguage() === 'ko'
                 ? '값은 0 이상이어야 합니다.'
                 : 'Values must be greater than or equal to 0.');
             return;
         }
 
+        // Convert bilirubin to mg/dL if needed (mDF formula uses mg/dL)
+        const bilirubin = this.convertBilirubinToMgDl(bilirubinRaw, bilirubinUnit);
+
         // Calculate mDF
-        // Formula: mDF = 4.6 × (PT - Control PT) + Total Bilirubin
+        // Formula: mDF = 4.6 × (PT - Control PT) + Total Bilirubin (mg/dL)
         const ptDifference = pt - controlPt;
         const multipliedValue = 4.6 * ptDifference;
         const mdfScore = multipliedValue + bilirubin;
 
         // Display results
-        this.displayResults(mdfScore, pt, bilirubin, controlPt, ptDifference, multipliedValue);
+        this.displayResults(mdfScore, pt, bilirubin, controlPt, ptDifference, multipliedValue, bilirubinRaw, bilirubinUnit);
 
         // Save calculation to history (optional feature for future)
         this.saveCalculation(mdfScore, pt, bilirubin, controlPt);
@@ -120,7 +163,7 @@ class MDFCalculator {
     /**
      * Display calculation results
      */
-    displayResults(mdfScore, pt, bilirubin, controlPt, ptDifference, multipliedValue) {
+    displayResults(mdfScore, pt, bilirubin, controlPt, ptDifference, multipliedValue, bilirubinRaw, bilirubinUnit) {
         // Show result section
         this.elements.resultSection.style.display = 'block';
 
@@ -128,7 +171,7 @@ class MDFCalculator {
         this.elements.mdfResult.textContent = mdfScore.toFixed(2);
 
         // Display calculation breakdown
-        this.displayCalculationBreakdown(pt, bilirubin, controlPt, ptDifference, multipliedValue, mdfScore);
+        this.displayCalculationBreakdown(pt, bilirubin, controlPt, ptDifference, multipliedValue, mdfScore, bilirubinRaw, bilirubinUnit);
 
         // Display clinical interpretation
         this.displayInterpretation(mdfScore);
@@ -143,14 +186,23 @@ class MDFCalculator {
     /**
      * Display calculation breakdown
      */
-    displayCalculationBreakdown(pt, bilirubin, controlPt, ptDifference, multipliedValue, mdfScore) {
+    displayCalculationBreakdown(pt, bilirubin, controlPt, ptDifference, multipliedValue, mdfScore, bilirubinRaw, bilirubinUnit) {
         const isKorean = i18n.getCurrentLanguage() === 'ko';
+
+        // Show conversion info if µmol/L was used
+        let conversionNote = '';
+        if (bilirubinUnit === 'µmol/L') {
+            conversionNote = `
+                <strong>${i18n.translate('calc-bili-convert')}:</strong> ${bilirubinRaw.toFixed(1)} µmol/L ÷ 17.1 = ${bilirubin.toFixed(2)} mg/dL<br>
+            `;
+        }
 
         const breakdown = `
             <div style="line-height: 2;">
                 <strong>${i18n.translate('calc-pt-diff')}:</strong> ${pt.toFixed(1)} - ${controlPt.toFixed(1)} = ${ptDifference.toFixed(1)} sec<br>
                 <strong>${i18n.translate('calc-multiplied')}:</strong> 4.6 × ${ptDifference.toFixed(1)} = ${multipliedValue.toFixed(2)}<br>
-                <strong>${i18n.translate('calc-plus-bili')}:</strong> ${multipliedValue.toFixed(2)} + ${bilirubin.toFixed(1)} = ${mdfScore.toFixed(2)}<br>
+                ${conversionNote}
+                <strong>${i18n.translate('calc-plus-bili')}:</strong> ${multipliedValue.toFixed(2)} + ${bilirubin.toFixed(2)} = ${mdfScore.toFixed(2)}<br>
                 <hr style="margin: 12px 0; border: none; border-top: 1px solid var(--border-color);">
                 <strong>${i18n.translate('calc-final')}:</strong> <span style="font-size: 18px; color: var(--accent-color);">${mdfScore.toFixed(2)}</span>
             </div>
@@ -198,6 +250,10 @@ class MDFCalculator {
         // Reset control PT to default
         this.elements.controlPtInput.value = '13.5';
 
+        // Reset bilirubin unit to default
+        this.elements.bilirubinUnit.dataset.unit = 'mg/dL';
+        this.elements.bilirubinUnit.querySelector('.unit-text').textContent = 'mg/dL';
+
         // Hide results
         this.elements.resultSection.style.display = 'none';
 
@@ -220,6 +276,7 @@ class MDFCalculator {
         const values = {
             pt: this.elements.ptInput.value,
             bilirubin: this.elements.bilirubinInput.value,
+            bilirubinUnit: this.getBilirubinUnit(),
             controlPt: this.elements.controlPtInput.value
         };
 
@@ -238,6 +295,10 @@ class MDFCalculator {
 
                 if (values.pt) this.elements.ptInput.value = values.pt;
                 if (values.bilirubin) this.elements.bilirubinInput.value = values.bilirubin;
+                if (values.bilirubinUnit) {
+                    this.elements.bilirubinUnit.dataset.unit = values.bilirubinUnit;
+                    this.elements.bilirubinUnit.querySelector('.unit-text').textContent = values.bilirubinUnit;
+                }
                 if (values.controlPt) this.elements.controlPtInput.value = values.controlPt;
             } catch (e) {
                 console.error('Error loading saved values:', e);

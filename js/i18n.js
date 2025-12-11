@@ -41,6 +41,7 @@ const translations = {
         // Calculation Breakdown
         'calc-pt-diff': 'PT 차이',
         'calc-multiplied': '4.6 × PT 차이',
+        'calc-bili-convert': '빌리루빈 단위 변환',
         'calc-plus-bili': '+ 총 빌리루빈',
         'calc-final': '최종 mDF 점수'
     },
@@ -82,6 +83,7 @@ const translations = {
         // Calculation Breakdown
         'calc-pt-diff': 'PT Difference',
         'calc-multiplied': '4.6 × PT Difference',
+        'calc-bili-convert': 'Bilirubin Unit Conversion',
         'calc-plus-bili': '+ Total Bilirubin',
         'calc-final': 'Final mDF Score'
     }
