@@ -3,16 +3,16 @@
  * Provides offline functionality and caching
  */
 
-const CACHE_VERSION = 'v1.2.0';
+const CACHE_VERSION = 'v1.2.1';
 const CACHE_NAME = `mdf-calculator-${CACHE_VERSION}`;
 
 // Files to cache
 const FILES_TO_CACHE = [
     '/',
     '/index.html',
-    '/css/styles.css',
-    '/js/app.js',
-    '/js/i18n.js',
+    '/css/styles.css?v=1.2.1',
+    '/js/app.js?v=1.2.1',
+    '/js/i18n.js?v=1.2.1',
     '/manifest.json',
     '/icons/icon-192.png',
     '/icons/icon-512.png'

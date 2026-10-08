@@ -224,7 +224,8 @@ class MDFCalculator {
      * Display clinical interpretation
      */
     displayInterpretation(mdfScore) {
-        const isSevere = mdfScore >= 32;
+        // Use the displayed (rounded) score so styling matches updateInterpretation()
+        const isSevere = parseFloat(mdfScore.toFixed(2)) >= 32;
 
         // Update section styling
         if (isSevere) {
